@@ -1,0 +1,172 @@
+﻿<%-- 
+Name:
+Author: 成七一
+Description:Service Class GENERATE TEMPLATE FOR FWEB（FOREVER WEB RAPID FRAMEWORK）
+CreateTime：2014年7月17日 13:43:50
+--%>
+
+<%@ Assembly Name="System.Data" %>
+<%@ Import Namespace="System.Data" %>
+<%@ Assembly Name="SchemaExplorer" %>
+<%@ Import Namespace="SchemaExplorer" %>
+<%@ Assembly Name="System" %>
+<%@ Import Namespace="System" %>
+<%@ Map Name="JavaAlias" Src="mysql-java-alias" %>
+
+<%@ Template Language="C#" TargetLanguage="Text" %>
+<%@ Property Name="SourceTables" Optional="True" Type="SchemaExplorer.TableSchemaCollection" Category="Database" Description="可以选择多张表." %>
+<%@ Property Name="NameSpace" Type="System.String" Category="Context" %>
+<%@ Property Name="Author" Type="System.String" Category="Context" Default="cqiyi" %>
+
+<%@ Register Name="Domain" Template="fweb-domain.cst" MergeProperties="False" ExcludeProperties="" %>
+<%@ Register Name="PartialMapperJava" Template="fweb-partial.mapper-java.cst" MergeProperties="False" ExcludeProperties="" %>
+<%@ Register Name="PartialMapperXML" Template="fweb-partial.mapper-xml.cst" MergeProperties="False" ExcludeProperties="" %>
+<%@ Register Name="MapperJava" Template="fweb-mapper-java.cst" MergeProperties="False" ExcludeProperties="" %>
+<%@ Register Name="MapperXML" Template="fweb-mapper-xml.cst" MergeProperties="False" ExcludeProperties="" %>
+<%@ Register Name="Service" Template="fweb-service.cst" MergeProperties="False" ExcludeProperties="" %>
+<%@ Register Name="ServiceTest" Template="fweb-service-test.cst" MergeProperties="False" ExcludeProperties="" %>
+<%@ Register Name="Controller" Template="fweb-controller.cst" MergeProperties="False" ExcludeProperties="" %>
+<%@ Register Name="JspList" Template="fweb-jsp-list.cst" MergeProperties="False" ExcludeProperties="" %>
+<%@ Register Name="JspDetail" Template="fweb-jsp-detail.cst" MergeProperties="False" ExcludeProperties="" %>
+<%@ Register Name="JspModify" Template="fweb-jsp-modify.cst" MergeProperties="False" ExcludeProperties="" %>
+
+<%		
+	output();
+%>
+
+<script runat="template">    
+    public void output() {
+        String DomainPath               = @"D:\eclipse\workspace\fts\src\main\java\com\hhwy\fts\domain";
+        
+        String PartialMapperJavaPath    = @"D:\eclipse\workspace\fts\src\main\java\com\hhwy\fts\mapper\partial";
+        String PartialMapperXMLPath     = @"D:\eclipse\workspace\fts\src\main\resources\com\hhwy\fts\mapper\partial";
+        String MapperJavaPath           = @"D:\eclipse\workspace\fts\src\main\java\com\hhwy\fts\mapper";
+        String MapperXMLPath            = @"D:\eclipse\workspace\fts\src\main\resources\com\hhwy\fts\mapper";
+        
+        String ServicePath              = @"D:\eclipse\workspace\fts\src\main\java\com\hhwy\fts\service";
+        String ServiceTestPath          = @"D:\eclipse\workspace\fts\src\test\java\org\hhwy\fweb1\test";
+        String ControllerPath           = @"D:\eclipse\workspace\fts\src\main\java\com\hhwy\fts\web";
+        
+        String JspListPath              = @"D:\eclipse\workspace\fts\src\main\webapp\WEB-INF\views";
+        String JspDetailPath            = @"D:\eclipse\workspace\fts\src\main\webapp\WEB-INF\views";
+        String JspModifyPath            = @"D:\eclipse\workspace\fts\src\main\webapp\WEB-INF\views";
+        
+        
+        int i0 = 0;
+        int i1 = 0;
+        foreach(TableSchema table in SourceTables)
+    	{
+            i0++;            
+            String fileName = StringUtil.ToPascalCase(table.Name.TrimStart("t_".ToCharArray()));
+            
+            String domainFileName = DomainPath + "\\" + fileName + ".java";
+            this.Response.WriteLine(new System.IO.FileInfo(domainFileName).FullName + "...");
+            Domain domain = this.Create<Domain>();
+            domain.SourceTable = table;
+            domain.Author = Author;
+            domain.NameSpace = NameSpace;
+            domain.RenderToFile(domainFileName, true);
+            i1++;
+            
+            String partialMapperJavaFileName = PartialMapperJavaPath + "\\" + "Partial" + fileName + "Mapper.java";
+            this.Response.WriteLine(new System.IO.FileInfo(partialMapperJavaFileName).FullName + "...");
+            PartialMapperJava partialMapperJava = this.Create<PartialMapperJava>();
+            partialMapperJava.SourceTable = table;
+            partialMapperJava.Author = Author;
+            partialMapperJava.NameSpace = NameSpace;
+            partialMapperJava.RenderToFile(partialMapperJavaFileName, true);
+            i1++;
+            
+            
+            String partialMapperXMLFileName = PartialMapperXMLPath + "\\Partial" + fileName + "Mapper.xml";
+            this.Response.WriteLine(new System.IO.FileInfo(partialMapperXMLFileName).FullName + "...");
+            PartialMapperXML partialMapperXML = this.Create<PartialMapperXML>();
+            partialMapperXML.SourceTable = table;
+            partialMapperXML.Author = Author;
+            partialMapperXML.NameSpace = NameSpace;
+            partialMapperXML.RenderToFile(partialMapperXMLFileName, true);
+            i1++;
+            
+            
+            String mapperJavaFileName = MapperJavaPath + "\\" + fileName + "Mapper.java";
+            this.Response.WriteLine(new System.IO.FileInfo(mapperJavaFileName).FullName + "...");
+            MapperJava mapperJava = this.Create<MapperJava>();
+            mapperJava.SourceTable = table;
+            mapperJava.Author = Author;
+            mapperJava.NameSpace = NameSpace;
+            mapperJava.RenderToFile(mapperJavaFileName, true);
+            i1++;
+            
+            
+            String mapperXMLFileName = MapperXMLPath + "\\" + fileName + "Mapper.xml";
+            this.Response.WriteLine(new System.IO.FileInfo(mapperXMLFileName).FullName + "...");
+            MapperXML mapperXML = this.Create<MapperXML>();
+            mapperXML.SourceTable = table;
+            mapperXML.Author = Author;
+            mapperXML.NameSpace = NameSpace;
+            mapperXML.RenderToFile(mapperXMLFileName, true);
+            i1++;
+            
+            
+            String serviceFileName = ServicePath + "\\" + fileName + "Service.java";
+            this.Response.WriteLine(new System.IO.FileInfo(serviceFileName).FullName + "...");
+            Service service = this.Create<Service>();
+            service.SourceTable = table;
+            service.Author = Author;
+            service.NameSpace = NameSpace;
+            service.RenderToFile(serviceFileName, true);
+            i1++;
+            
+            
+            String serviceTestFileName = ServiceTestPath + "\\" + fileName + "ServiceTest.java";
+            this.Response.WriteLine(new System.IO.FileInfo(serviceTestFileName).FullName + "...");
+            ServiceTest serviceTest = this.Create<ServiceTest>();
+            serviceTest.SourceTable = table;
+            serviceTest.Author = Author;
+            serviceTest.NameSpace = NameSpace;
+            serviceTest.RenderToFile(serviceTestFileName, true);
+            i1++;
+            
+            
+            String controllerFileName = ControllerPath + "\\" + fileName + "Controller.java";
+            this.Response.WriteLine(new System.IO.FileInfo(controllerFileName).FullName + "...");
+            Controller controller = this.Create<Controller>();
+            controller.SourceTable = table;
+            controller.Author = Author;
+            controller.NameSpace = NameSpace;
+            controller.RenderToFile(controllerFileName, true);
+            i1++;
+            
+            
+            String jspListFileName = JspListPath + "\\" + fileName.ToLower() + "-list.jsp";
+            this.Response.WriteLine(new System.IO.FileInfo(jspListFileName).FullName + "...");
+            JspList jspList = this.Create<JspList>();
+            jspList.SourceTable = table;
+            jspList.Author = Author;
+            jspList.RenderToFile(jspListFileName, true);
+            i1++;
+            
+            
+            String jspDetailFileName = JspDetailPath + "\\" + fileName.ToLower() + "-detail.jsp";
+            this.Response.WriteLine(new System.IO.FileInfo(jspDetailFileName).FullName + "...");
+            JspDetail jspDetail = this.Create<JspDetail>();
+            jspDetail.SourceTable = table;
+            jspDetail.Author = Author;
+            jspDetail.RenderToFile(jspDetailFileName, true);   
+            i1++;         
+            
+            
+            String jspModifyFileName = JspModifyPath + "\\" + fileName.ToLower() + "-modify.jsp";
+            this.Response.WriteLine(new System.IO.FileInfo(jspModifyFileName).FullName + "...");
+            JspModify jspModify = this.Create<JspModify>();
+            jspModify.SourceTable = table;
+            jspModify.Author = Author;
+            jspModify.RenderToFile(jspModifyFileName, true);   
+            i1++;  
+            
+            this.Response.Write("\r\n");
+        }
+        this.Response.WriteLine("\r\n共生成： " + i0 + "个模块， " + i1 + "个文件。");
+    }
+
+</script>
