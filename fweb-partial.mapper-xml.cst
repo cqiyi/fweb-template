@@ -41,11 +41,24 @@ Description: Mybatis Mapper XML GENERATE TEMPLATE FOR FWEB（FOREVER WEB RAPID F
   <select id="getVersion" parameterType="string" resultType="int">
     select version from <%=SourceTable.Name%> where id = #{id}
   </select>
-
+  
   <select id="getAll" resultType="<%=GetDomainClassName()%>">
     select <%=GetSelectFields()%> from <%=SourceTable.Name%>
   </select>
+  
+  <select id="getRowCount" resultType="int">
+    select count(*) from <%=SourceTable.Name%>
+  </select>
 
+  <select id="getAllPaged" parameterType="<%=GetDomainClassName()%>" resultType="<%=GetDomainClassName()%>">
+    select <%=GetSelectFields()%> from <%=SourceTable.Name%> limit #{pageSize} offset #{pageIndex}
+  </select>
+  <%--
+  <select id="getAllPaged" parameterType="<%=GetDomainClassName()%>" resultType="<%=GetDomainClassName()%>">
+    select <%=GetSelectFields()%> from <%=SourceTable.Name%> <trim prefix="where" prefixOverrides="and"><%=whereSQL()%></trim> limit #{pageSize} offset #{pageIndex}
+  </select>
+  
+  --%>
 </mapper>
 
 <script runat="template">
@@ -134,5 +147,26 @@ Description: Mybatis Mapper XML GENERATE TEMPLATE FOR FWEB（FOREVER WEB RAPID F
         }
     	
     	return s.Trim().TrimEnd(',');
+    }
+    
+    public string whereSQL(){
+        
+    	string s = string.Empty;
+        foreach(ColumnSchema col in SourceTable.Columns)
+        {
+            if(col.Name.ToUpper() == "ID") continue;
+            if(col.Name.ToUpper() == "CREATE_TIME") continue;
+            if(col.Name.ToUpper() == "UPDATE_TIME") continue;
+            if(col.Name.ToUpper() == "VERSION") continue;
+            if(col.Name.ToUpper() == "STATUS") continue;
+            
+            if(GetJavaType(col).ToUpper() == "STRING"){
+                s += string.Format("<if test=\"{0} != null\">{1} like \"%\"#{{{0}}}\"%\" </if>", StringUtil.ToCamelCase(col.Name), col.Name);
+            } else {
+                s += string.Format("<if test=\"{0} != null\">{1} = #{{{0}}} </if>", StringUtil.ToCamelCase(col.Name), col.Name);
+            }
+        }
+        return s;
+        
     }
 </script>

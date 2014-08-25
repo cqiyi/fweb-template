@@ -26,6 +26,7 @@ package <%=NameSpace%>.mapper.partial;
 
 import java.util.List;
 import java.util.Map;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import <%=NameSpace%>.domain.<%=GetDomainClassName()%>;
 
@@ -49,6 +50,10 @@ public interface Partial<%=GetDomainClassName()%>Mapper {
 	  public int getVersion(String id);
 	  
 	  public List<<%=GetDomainClassName()%>> getAll();
+      
+	  public int getRowCount();
+	  
+	  public List<<%=GetDomainClassName()%>> getAllPaged(@Param("pageIndex") int pageIndex, @Param("pageSize") int pageSize);
 }
 
 <script runat="template">

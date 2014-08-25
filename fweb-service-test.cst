@@ -20,7 +20,7 @@ CreateTime：2014年7月17日 13:43:50
 package <%=NameSpace%>.test;
 
 import java.util.List;
-import org.hhwy.fweb1.BaseJUnit4TestCase;
+import <%=NameSpace%>.BaseJUnit4TestCase;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import <%=NameSpace%>.service.<%=GetDomainClassName()%>Service;
@@ -31,59 +31,81 @@ public class <%=GetDomainClassName()%>ServiceTest extends BaseJUnit4TestCase {
 	@Autowired
 	private <%=GetDomainClassName()%>Service service;
     
-	@Test
-	public void allServiceTest() {
-		int objectCount = this.getRandomInt();
-		int deleteCount = 0;
-		int updateCount = 0;
-
-		for (int i = 0; i < objectCount; i++) {
-			<%=GetDomainClassName()%> <%=GetDomainVariableName()%> = new <%=GetDomainClassName()%>();
-            <%foreach(ColumnSchema col in SourceTable.Columns){%>   
-        <%if(col.Name.ToUpper() == "ID" || col.Name.ToUpper() == "VERSION" ) {  continue; }%>
-        <%if(GetJavaType(col) == "Date") { %> 
+    @Test
+    public void insertTest() {
+        <%=GetDomainClassName()%> obj = this.getRandomDomain();
+        service.insert(obj);
+        System.out.println("已插入：" + obj);
+    }
+    
+    
+    @Test
+    public void updateTest() {
+        <%=GetDomainClassName()%> obj0 = this.getRandomDomain();
+        service.insert(obj0);
+        System.out.println("已插入：" + obj0);
         
-            <%=GetDomainVariableName()%>.set<%=StringUtil.ToPascalCase(col.Name)%>(this.getRandomDate()); <% continue; }%>
-        <%if(GetJavaType(col) == "int") { %> 
-            <%=GetDomainVariableName()%>.set<%=StringUtil.ToPascalCase(col.Name)%>(this.getRandomInt()); <% continue; }%>
-        <%if(GetJavaType(col) == "double") { %> 
-            <%=GetDomainVariableName()%>.set<%=StringUtil.ToPascalCase(col.Name)%>(this.getRandomDouble()); <% continue; }%>
-			<%=GetDomainVariableName()%>.set<%=StringUtil.ToPascalCase(col.Name)%>(this.getRandomString());<%}%>
-
-			service.insert(<%=GetDomainVariableName()%>);
-
-			if (this.getRandomBoolean()) {
-				<%=GetDomainClassName()%> obj = service.get(<%=GetDomainVariableName()%>.getId());
-				service.update(obj);
-				updateCount++;
-				continue;
-			}
-
-			if (this.getRandomBoolean() && i > 0) {
-				System.out.println("将被删除：" + <%=GetDomainVariableName()%>.getId());
-				service.delete(<%=GetDomainVariableName()%>.getId());
-				deleteCount++;
-				continue;
-			}
-		}
-
-		System.out.println("写入：" + objectCount + ", 修改：" + updateCount + ", 删除："
-				+ deleteCount + "\n");
-
+		<%=GetDomainClassName()%> obj1 = service.get(obj0.getId());
+        //获取到的obj对象
+        System.out.println("已获取：" + obj1);
+        
+        service.update(obj1);
+		<%=GetDomainClassName()%> obj2 = service.get(obj1.getId());
+        System.out.println("更新后：" + obj2);
+        
+    }
+    
+    
+    @Test
+    public void deleteTest() {
+        <%=GetDomainClassName()%> obj = this.getRandomDomain();
+        service.insert(obj);
+        System.out.println("已插入：" + obj);
+		service.delete(obj.getId());
+    }
+    
+    @Test
+    public void getTest() {
+		int objectCount = this.getRandomInt();
+		for (int i = 0; i < objectCount; i++) {
+            service.insert(this.getRandomDomain());
+        }
+        
+        System.out.println("所有：");
 		List<<%=GetDomainClassName()%>> list = service.getAll();
 		for (<%=GetDomainClassName()%> obj : list) {
 			System.out.println(obj);
 		}
-
-		service.delete(list.get(0).getId());
-
-	}
+        
+        System.out.println("总行数：" + service.getRowCount());
+        
+        service.getAllPaged(1, 3);
+        System.out.println("分页：" + service.getAllPaged(1, 3).size());
+    }
+    
+    
+    
+    private <%=GetDomainClassName()%> getRandomDomain(){    
+		<%=GetDomainClassName()%> obj = new <%=GetDomainClassName()%>();
+        <%foreach(ColumnSchema col in SourceTable.Columns){%>   
+        <%if( Ignored(col) ) {  continue; }%>
+        obj.set<%=StringUtil.ToPascalCase(col.Name)%>(this.getRandom<%=GetJavaType(col)%>());
+        <%}%>
+        
+        return obj;
+    }
 
 }
 
 <script runat="template">
     public override string GetFileName() {
         return GetDomainClassName() + "Test.java";
+    }
+    
+    public bool Ignored(ColumnSchema col){
+        string ignored = "/id/version/id/create_time/update_time/status/";
+        string cn = "/" + col.Name.ToLower() + "/";
+        return ignored.IndexOf(cn) >= 0;
     }
     
     public string GetDomainClassName() {
@@ -96,7 +118,7 @@ public class <%=GetDomainClassName()%>ServiceTest extends BaseJUnit4TestCase {
     
     public string GetJavaType(ColumnSchema col) {
         try{
-            return JavaAlias[col.NativeType];
+            return StringUtil.ToPascalCase(JavaAlias[col.NativeType]);
         }catch(Exception ex){
             return col.NativeType + "[N/A]";
         }

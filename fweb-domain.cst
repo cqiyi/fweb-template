@@ -28,8 +28,6 @@ import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Date;
 
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang3.StringUtils;
 import <%=NameSpace%>.core.Utility;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -40,6 +38,16 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
   * <%=SourceTable.Description %>
   */
 public class <%=GetClassName()%> implements Serializable {
+    
+	<%
+	foreach(ColumnSchema col in SourceTable.Columns)
+	{
+	%> 
+    	/*
+    	 * <%= col.Description %>
+    	 */
+        public static final String FIELD_<%=col.Name.ToUpper() %> = "<%=col.Name%>";
+    <%} %>
 
 	/*
 	 * 默认构造函数
