@@ -63,7 +63,7 @@ CreateTime：2014年7月17日 13:43:50
 	</thead>
 	<tbody>
 		<<%=P()%>
-			int i = 0;
+			int i = Integer.parseInt(request.getAttribute("currentPageStarted").toString());
 		<%=P()%>>
 		<c:forEach items="${list}" var="<%=GetDomainVariableName()%>">
 			<tr>

@@ -18,7 +18,7 @@ Description: Mybatis Mapper XML GENERATE TEMPLATE FOR FWEB（FOREVER WEB RAPID F
 <%@ Property Name="Author" Type="System.String" Category="Context" Default="cqiyi" %>
 <%@ Property Name="OutputDirectory" Type="System.String" Category="Context" Default=".\partial.mapper.xml" %>
 
-<%@ Register Name="Mapper" Template="fweb-mapper-xml.cst" MergeProperties="False" ExcludeProperties="" %>
+<%@ Register Name="Mapper" Template="fweb-partial.mapper-xml.cst" MergeProperties="False" ExcludeProperties="" %>
 
 <%		
 	output();
