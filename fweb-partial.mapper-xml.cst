@@ -52,8 +52,8 @@ Description: Mybatis Mapper XML GENERATE TEMPLATE FOR FWEB（FOREVER WEB RAPID F
     select count(*) from <%=SourceTable.Name%>
   </select>
 
-  <select id="getAllPaged" parameterType="<%=GetDomainClassName()%>" resultType="<%=GetDomainClassName()%>">
-    select <%=GetSelectFields()%> from <%=SourceTable.Name%> limit #{pageSize} offset #{pageIndex}
+  <select id="getAllPaged" resultType="<%=GetDomainClassName()%>">
+    select <%=GetSelectFields()%> from <%=SourceTable.Name%> <%if(f.Contains("trice")){%>order by trice desc<%} else if(f.Contains("update_time")){%>order by update_time desc<%} else if(f.Contains("create_time")){%>order by create_time desc<%}%> limit #{pageSize} offset #{pageIndex}
   </select>
   <%--
   <select id="getAllPaged" parameterType="<%=GetDomainClassName()%>" resultType="<%=GetDomainClassName()%>">
